@@ -2,6 +2,8 @@ import json
 import sys
 import nltk
 
+tokenized_tweets = []
+
 def getTweets(filename):
 	corpus = open(filename)
 	decoded_response = corpus.read()
@@ -11,7 +13,6 @@ def getTweets(filename):
 		name = item.get("text")
 		text.append(name)
 
-	tokenized_tweets = []
 
 	for tweet in text:
 		tokenized_tweets.append(nltk.wordpunct_tokenize(tweet))
