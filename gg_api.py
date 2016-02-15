@@ -1,14 +1,56 @@
 import sys
 import nltk
 from preprocessing import *
+from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
+from nameparser.parser import HumanName
+from collections import Counter
 
 tweets = []
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
+
+def get_human_names(text):
+    print("called")
+    pos = nltk.pos_tag(text)
+    sentt = nltk.ne_chunk(pos, binary = False)
+    person = []
+    name = ""
+    for subtree in sentt.subtrees(filter=lambda t: t.label() == 'PERSON'):
+        for leaf in subtree.leaves():
+            person.append(leaf[0])
+        if len(person) > 1:
+            for part in person:
+                name += part + ' '
+            if name[:-1] not in person_list:
+                person_list.append(name[:-1])
+            name = ''
+            person = []
+    return person_list
+
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
     of this function or what it returns.'''
+    cnt = Counter()
+    host_tweets = []
+    number = 0
+    for tweet in tokenized_tweets:
+        if number > 20:
+            break
+        if "host" in tweet:
+            host_tweets.append(tweet)
+            number=+1
+
+    for tweet in host_tweets:
+        tweet_names = get_human_names(tweet)
+        for t in tweet_names:
+            cnt[t] += 1
+
+    print cnt
+
+
+    
+    
     # Your code here
     print "Unimplemented"
     return #hosts
@@ -62,6 +104,8 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
+
+    print person_list
     while True:
         print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n"
         user_input = input("Choose a function: ")

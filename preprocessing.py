@@ -7,6 +7,8 @@ from nltk.tokenize import RegexpTokenizer
 
 stopwordsList = stopwords.words('english')
 
+tokenized_tweets = []
+
 def getTweets(filename):
 	corpus = open(filename)
 	decoded_response = corpus.read()
