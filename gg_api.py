@@ -11,7 +11,7 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 
 
 def get_human_names(text):
-    print("called")
+    #print("called")
     pos = nltk.pos_tag(text)
     sentt = nltk.ne_chunk(pos, binary = False)
     person = []
@@ -39,7 +39,7 @@ def get_hosts(year):
     
     for tweet in tweets:
         if 'host' in tweet:
-            print("called")
+            #print("called")
             host_tweets.append(tweet)
 
     for tweet in host_tweets:
@@ -61,9 +61,6 @@ def get_hosts(year):
             hosts.append(w)
 
     print hosts
-
-    # Your code here
-    #print "Unimplemented"
     return hosts
 
 def get_awards(year):
@@ -115,12 +112,12 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
-    get_hosts(2013)
-    
+    hosts = []
     while True:
         print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n"
         user_input = input("Choose a function: ")
-        if (user_input == 1): {get_hosts(2013)}
+        if (user_input == 1):
+            hosts = get_hosts(2013)
         elif (user_input == 2): {get_awards(2013)}
         elif (user_input == 3): {get_nominees(2013)}
         elif (user_input == 4): {get_winners(2013)}
