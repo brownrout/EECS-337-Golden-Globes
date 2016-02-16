@@ -29,5 +29,6 @@ def getTweets(filename):
 		for token in tweet:
 			if token.lower() in stopwordsList:
 				tweet.remove(token)
-
+                    
 	return tokenized_tweets
+

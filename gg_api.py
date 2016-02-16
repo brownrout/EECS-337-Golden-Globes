@@ -34,34 +34,37 @@ def get_hosts(year):
     of this function or what it returns.'''
     cnt = Counter()
     host_tweets = []
-    output = []
+    hosts = []
     number = 0
-    for tweet in tokenized_tweets:
-        if "host" in tweet:
+    
+    for tweet in tweets:
+        if 'host' in tweet:
+            print("called")
             host_tweets.append(tweet)
 
     for tweet in host_tweets:
         tweet_names = get_human_names(tweet)
+            # if number > 50: #THIS IS OUR PROBLEM, WHEN THERE ARE MORE TWEETS FOR SOME REASON THE THRESHOLD IS NOT BEING CALCULATED CORRECTLY, EVEN THOUGH THE COUNTER STILL WORKS
         if number > 10:
             break
         for t in tweet_names:
             cnt[t] += 1
             number +=1
 
-    threshold = (cnt[max(cnt)]/2)
+    print cnt[max(cnt)]
+    print cnt
+    threshold = (cnt[max(cnt)]/2 * 1.5)
     print threshold
 
     for w,v in cnt.most_common(3):
-        print w
-        print v
         if v > threshold:
-            output.append(w)
+            hosts.append(w)
 
-    print output
+    print hosts
 
     # Your code here
     #print "Unimplemented"
-    return output
+    return hosts
 
 def get_awards(year):
     '''Awards is a list of strings. Do NOT change the name
