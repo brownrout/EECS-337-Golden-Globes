@@ -1,6 +1,11 @@
 import json
 import sys
 import nltk
+from nltk.corpus import stopwords
+import string
+from nltk.tokenize import RegexpTokenizer
+
+stopwordsList = stopwords.words('english')
 
 tokenized_tweets = []
 
@@ -13,10 +18,16 @@ def getTweets(filename):
 		name = item.get("text")
 		text.append(name)
 
+	tokenized_tweets = []
+	tokenizer = RegexpTokenizer(r'\w+')
 
 	for tweet in text:
-		tokenized_tweets.append(nltk.wordpunct_tokenize(tweet))
-		
-	return tokenized_tweets
+		tweet = tokenizer.tokenize(tweet)
+		tokenized_tweets.append(tweet)
 
-#    print tokenized_tweets[0][0]
+	for tweet in tokenized_tweets:
+		for token in tweet:
+			if token.lower() in stopwordsList:
+				tweet.remove(token)
+
+	return tokenized_tweets
