@@ -15,6 +15,7 @@ def get_human_names(text):
     pos = nltk.pos_tag(text)
     sentt = nltk.ne_chunk(pos, binary = False)
     person = []
+    person_list = []
     name = ""
     for subtree in sentt.subtrees(filter=lambda t: t.label() == 'PERSON'):
         for leaf in subtree.leaves():
@@ -33,27 +34,34 @@ def get_hosts(year):
     of this function or what it returns.'''
     cnt = Counter()
     host_tweets = []
+    output = []
     number = 0
     for tweet in tokenized_tweets:
-        if number > 20:
-            break
         if "host" in tweet:
             host_tweets.append(tweet)
-            number=+1
 
     for tweet in host_tweets:
         tweet_names = get_human_names(tweet)
+        if number > 10:
+            break
         for t in tweet_names:
             cnt[t] += 1
+            number +=1
 
-    print cnt
+    threshold = (cnt[max(cnt)]/2)
+    print threshold
 
+    for w,v in cnt.most_common(3):
+        print w
+        print v
+        if v > threshold:
+            output.append(w)
 
-    
-    
+    print output
+
     # Your code here
-    print "Unimplemented"
-    return #hosts
+    #print "Unimplemented"
+    return output
 
 def get_awards(year):
     '''Awards is a list of strings. Do NOT change the name
@@ -104,8 +112,8 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
-
-    print person_list
+    get_hosts(2013)
+    
     while True:
         print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n"
         user_input = input("Choose a function: ")
