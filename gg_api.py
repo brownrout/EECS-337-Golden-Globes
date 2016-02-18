@@ -90,6 +90,58 @@ def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
     names as keys, and each entry a list of strings. Do NOT change the
     name of this function or what it returns.'''
+    
+    presenters = dict()
+    presenters_tweets = []
+    cnt = Counter()
+    presenters_keywords = dict()
+    stopwordsList = stopwords.words('english')
+    presenter_words = ['present', 'presents', 'presenting','presnter']
+    
+    for award in OFFICIAL_AWARDS:
+        presenters[award] = []
+    
+    for award in OFFICIAL_AWARDS:
+        award_list = award.split(' ')
+        award_values = []
+        
+        for word in award_list:
+            if word not in stopwordsList: #extracting key words per award
+                award_values.append(word)
+        presenters_keywords[award] = award_values
+
+    for tweet in tweets:
+        if 'presents' in tweet or 'present' in tweet or 'presenting' in tweet or 'presenter' in tweet:
+            print("called")
+            presenters_tweets.append(tweet)
+
+    for w in presenters:
+        award_tweets = []
+        award_counter = Counter()
+        number = 0
+        
+        for tweet in presenters_tweets:
+            counter = 0
+            for word in presenters_keywords[w]: #checking to see how many key award words are in the tweet
+                if word in tweet:
+                    counter+= 1
+            if counter > 2: #only check tweets with at least 3 key words
+                award_tweets.append(tweet)
+
+        print award_tweets
+    
+        for tweet in award_tweets:
+            tweet_names = get_human_names(tweet) #get human names per tweet
+            print tweet_names #here you can see how Julia Roberts is not being recognized
+            if number > 50:
+                break
+            for t in tweet_names: #count each name
+                cnt[t] += 1
+                number +=1
+
+        print cnt
+        return
+
     # Your code here
     print "Unimplemented"
     return #presenters
