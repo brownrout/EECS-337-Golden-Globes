@@ -125,10 +125,10 @@ def get_presenters(year):
     presenter_words = ['present', 'presents', 'presenting','presnter']
     
     for award in OFFICIAL_AWARDS:
-        presenters[award] = []
+        presenters[award] = []  #setting up output dictionary
     
     for award in OFFICIAL_AWARDS:
-        award_list = award.split(' ')
+        award_list = award.split(' ') #convert into an iterable list
         award_values = []
         
         for word in award_list:
