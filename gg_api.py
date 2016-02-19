@@ -5,7 +5,9 @@ from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
 from nameparser.parser import HumanName
 from collections import Counter
 from nltk.corpus import stopwords
+from alchemyapi import AlchemyAPI
 
+alchemyapi = AlchemyAPI()
 tweets13 = []
 officialTweets13 = []
 tweets15 = []
@@ -16,7 +18,6 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 
 
 def get_human_names(text):
-    #print("called")
     pos = nltk.pos_tag(text)
     sentt = nltk.ne_chunk(pos, binary = False)
     person = []
@@ -216,6 +217,10 @@ def get_presenters(year):
         return
 
     return #presenters
+
+def get_sentiment():
+    #my code here
+    return sentiments
 
 def pre_ceremony():
     '''This function loads/fetches/processes any data your program
