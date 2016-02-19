@@ -142,7 +142,7 @@ def get_presenters(year):
     cnt = Counter()
     presenters_keywords = dict()
     stopwordsList = stopwords.words('english')
-    presenter_words = ['present', 'presents', 'presenting','presnter']
+    presenter_words = ['present', 'presents', 'presenting','presenter']
     
     for award in OFFICIAL_AWARDS:
         presenters[award] = []
@@ -156,7 +156,7 @@ def get_presenters(year):
                 award_values.append(word)
         presenters_keywords[award] = award_values
 
-    for tweet in tweets:
+    for tweet in tweets13:
         if 'presents' in tweet or 'present' in tweet or 'presenting' in tweet or 'presenter' in tweet:
             print("called")
             presenters_tweets.append(tweet)
@@ -188,8 +188,6 @@ def get_presenters(year):
         print cnt
         return
 
-    # Your code here
-    print "Unimplemented"
     return #presenters
 
 def pre_ceremony():
