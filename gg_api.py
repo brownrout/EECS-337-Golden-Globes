@@ -6,6 +6,7 @@ from nameparser.parser import HumanName
 from collections import Counter
 from nltk.corpus import stopwords
 from alchemyapi import AlchemyAPI
+from collections import OrderedDict
 
 alchemyapi = AlchemyAPI()
 tweets13 = []
@@ -17,7 +18,6 @@ punctTweets15 = []
 stopwordsList = stopwords.words('english')
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
-
 
 def get_human_names_hosts(text):
     #print("called")
@@ -162,11 +162,14 @@ def get_presenters(year):
         name of this function or what it returns.'''
     presenters = dict()
     presenters_tweets = []
-    presenters_keywords = dict()
+    awards_keywords = dict()
     stopwordsList = stopwords.words('english')
     presenter_words = ['present', 'presents', 'presenting','presenter','presented' 'Present', 'Presenter', 'Presenting', 'Presented', 'Presents']
-    final_stoplist = ['GoldenGlobes', 'RT', 'VanityFair', 'LancomeUSA', 'Ambassadress' ]
-    official_tweets = []
+    final_stoplist = ['GoldenGlobes', 'Golden Globes' 'RT', 'VanityFair']
+    tweets = []
+    
+    winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
+    
     
     for award in OFFICIAL_AWARDS:
         presenters[award] = []
@@ -178,53 +181,55 @@ def get_presenters(year):
         for word in award_list:
             if word not in stopwordsList: #extracting key words per award
                 award_values.append(word)
-        presenters_keywords[award] = award_values
+        awards_keywords[award] = award_values
     
     if year == '2013':
-        tweets = tweets13
+        tweets = punctTweets13
     if year == '2015':
-        tweets = tweets15
-        
-    for tweet in tweets:
-        for word in tweet:
-            if word in final_stoplist:
-                tweet.remove(word)
+        tweets = punctTweets15
 
     for tweet in tweets:
         if any(word in tweet for word in presenter_words):
             print("called")
             presenters_tweets.append(tweet)
 
+#print presenters_tweets
+
     for w in presenters:
         award_tweets = []
         award_counter = Counter()
         number = 0
-        
-        for tweet in presenters_tweets:
-            counter = 0
-            for word in presenters_keywords[w]: #checking to see how many key award words are in the tweet
-                if word in tweet:
-                    counter+= 1
-            if counter > 2: #only check tweets with at least 3 key words
-                award_tweets.append(tweet)
+        counter = 0
+        temp_list = winners[w].split(' ')
 
-        print award_tweets
-    
+        for tweet in presenters_tweets:
+            for winner in temp_list:
+                if winner in tweet:
+                    award_tweets.append(tweet)
+
+        #print award_tweets
+
         for tweet in award_tweets:
             tweet_names = get_human_names_general(tweet) #get human names per tweet
-            print tweet_names #here you can see how Julia Roberts is not being recognized
-            if number > 50:
-                break
-    
-        for t in tweet_names: #count each name
-            award_counter[t] += 1
-            number +=1
+            for t in tweet_names: #count each name
+                
+                if t in winners[w] or t in final_stoplist:
+                    pass
+                else:
+                    award_counter[t] += 1
         print award_counter
-        presenters[w] = award_counter.most_common(2)
-        print presenters
-    
+
+        final_presenters = []
+        for key,v in award_counter.most_common(2):
+            final_presenters.append(key)
+
+        presenters[w] = final_presenters
+            
     print presenters
     return presenters
+
+
+
 
 
 def get_sentiment():
@@ -250,6 +255,7 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
+
     while True:
         print '\n'
         year = raw_input("Which year: ")
