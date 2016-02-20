@@ -12,12 +12,15 @@ tweets13 = []
 officialTweets13 = []
 tweets15 = []
 officialTweets15 = []
+punctTweets13 = []
+punctTweets15 = []
 stopwordsList = stopwords.words('english')
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
 
-def get_human_names(text):
+def get_human_names_hosts(text):
+    #print("called")
     pos = nltk.pos_tag(text)
     sentt = nltk.ne_chunk(pos, binary = False)
     person = []
@@ -33,39 +36,62 @@ def get_human_names(text):
                 person_list.append(name[:-1])
             name = ''
             person = []
+
+    for name in person_list:
+        last_first = HumanName(name).last + ', ' + HumanName(name).first
+        print last_first
+    
     return person_list
+
+
+def get_human_names_general(text):
+    output = []
+    tagged = nltk.pos_tag(text)
+    namedEnt = nltk.ne_chunk(tagged, binary = True)
+    # print namedEnt
+    result = [' '.join([y[0] for y in x.leaves()]) for x in namedEnt.subtrees() if x.label() == "NE"]
+    # print result
+    for x in result:
+        if len(x.split()) == 2:
+            output.append(x)
+    return output
 
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
-    of this function or what it returns.'''
+        of this function or what it returns.'''
     cnt = Counter()
     host_tweets = []
     hosts = []
     number = 0
+    ignore = ["Hollywood", "Golden Globes"]
     
+    if year == '2013':
+        tweets = punctTweets13
+    if year == '2015':
+        tweets = punctTweets15
+
     for tweet in tweets:
         if 'host' in tweet:
             #print("called")
             host_tweets.append(tweet)
 
     for tweet in host_tweets:
-        tweet_names = get_human_names(tweet)
-            # if number > 50: #THIS IS OUR PROBLEM, WHEN THERE ARE MORE TWEETS FOR SOME REASON THE THRESHOLD IS NOT BEING CALCULATED CORRECTLY, EVEN THOUGH THE COUNTER STILL WORKS
+        tweet_names = get_human_names_hosts(tweet)
         if number > 10:
             break
         for t in tweet_names:
-            cnt[t] += 1
-            number +=1
+            if not any(w in t for w in ignore):
+                cnt[t] += 1
+                number +=1
 
-    print cnt[max(cnt)]
-    print cnt
-    threshold = (cnt[max(cnt)]/2 * 1.5)
-    print threshold
-
-    for w,v in cnt.most_common(3):
-        if v > threshold:
-            hosts.append(w)
-
+#    print cnt[max(cnt)]
+#    print cnt
+#    threshold = (cnt[max(cnt)]/2 * 1.5)
+#    print threshold
+#
+    for w,v in cnt.most_common(2):
+        hosts.append(w)
+    
     print hosts
     return hosts
 
@@ -76,73 +102,43 @@ def get_awards(year):
     award_words = ['Best', 'best', 'Motion', 'motion', 'Picture', 'picture', 'Drama', 'drama', 'Performance', 'performance', 'Actress', 'actress', 'Actor', 'actor','Comedy', 'comedy', 'Musical', 'musical', 'Animated', 'animated', 'Feature', 'feature', 'Film', 'film', 'Foreign', 'foreign', 'Language', 'language', 'Supporting', 'supporting', 'Role', 'role', 'Director', 'director', 'Screenplay', 'screenplay', 'Original', 'orginal', 'Score', 'score', 'Song', 'song', 'Television', 'television', 'Series', 'series', 'Mini-series',  'mini-series', 'mini', 'Mini']
     helper_words = ['by','By','An','an','In','in','A','a','For','for','-',':','Or','or']
     
+    officialTweets = []
     if year == '2013':
-        print "Getting awards for 2013..." + '\n'
-        awards = []
-        award_tweets = []
-        for tweet in officialTweets13:
-            if len(set(award_words).intersection(set(tweet))) > 3:
-                award_tweets.append(sorted(set(tweet), key=lambda x: tweet.index(x)))
-        for tweet in award_tweets:
-            first_index = len(tweet)-1
-            for word in award_words:
-                if word in tweet:
-                    index = tweet.index(word)
-                    if index < first_index:
-                        first_index = index
-            flag = True
-            temp = []
-            for word in tweet:
-                if word not in award_words and word not in helper_words and tweet.index(word) >= first_index:
-                    flag = False
-                if word in award_words or word in helper_words and tweet.index(word) >= first_index and flag:
-                    temp.append(word.lower())
-            awardString = ' '.join(sorted(set(temp), key=lambda x: temp.index(x)))
-            if awardString not in awards:
-                awards.append(awardString)
-        for x in awards:
-            if x.split()[0] != 'best':
-                awards.remove(x)
-        for x in awards:
-            x = x.split()
-        awards = set(awards)
-        for x in awards:
-            print x
-        return awards
-
+        officialTweets = officialTweets13
     if year == '2015':
-        print "Getting awards for 2015..." + '\n'
-        awards = []
-        award_tweets = []
-        for tweet in officialTweets15:
-            if len(set(award_words).intersection(set(tweet))) > 3:
-                award_tweets.append(sorted(set(tweet), key=lambda x: tweet.index(x)))
-        for tweet in award_tweets:
-            first_index = len(tweet)-1
-            for word in award_words:
-                if word in tweet:
-                    index = tweet.index(word)
-                    if index < first_index:
-                        first_index = index
-            flag = True
-            temp = []
-            for word in tweet:
-                if word not in award_words and word not in helper_words and tweet.index(word) >= first_index:
-                    flag = False
-                if word in award_words or word in helper_words and tweet.index(word) >= first_index and flag:
-                    temp.append(word.lower())
-            awardString = ' '.join(sorted(set(temp), key=lambda x: temp.index(x)))
-            if awardString not in awards:
-                awards.append(awardString)
-        for x in awards:
-            if x.split()[0] != 'best':
-                awards.remove(x)
-        for x in awards:
-            x = x.split()
-        awards = set(awards)
-        for x in awards:
-            print x
-        return awards
+        officialTweets = officialTweets15
+
+    awards = []
+    award_tweets = []
+    for tweet in officialTweets:
+        if len(set(award_words).intersection(set(tweet))) > 3:
+            award_tweets.append(sorted(set(tweet), key=lambda x: tweet.index(x)))
+    for tweet in award_tweets:
+        first_index = len(tweet)-1
+        for word in award_words:
+            if word in tweet:
+                index = tweet.index(word)
+                if index < first_index:
+                    first_index = index
+        flag = True
+        temp = []
+        for word in tweet:
+            if word not in award_words and word not in helper_words and tweet.index(word) >= first_index:
+                flag = False
+            if word in award_words or word in helper_words and tweet.index(word) >= first_index and flag:
+                temp.append(word.lower())
+        awardString = ' '.join(sorted(set(temp), key=lambda x: temp.index(x)))
+        if awardString not in awards:
+            awards.append(awardString)
+    for x in awards:
+        if x.split()[0] != 'best':
+            awards.remove(x)
+    for x in awards:
+        x = x.split()
+    awards = set(awards)
+    for x in awards:
+        print x
+    return awards
 
 def get_nominees(year):
     '''Nominees is a dictionary with the hard coded award
@@ -162,30 +158,40 @@ def get_winner(year):
 
 def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
-    names as keys, and each entry a list of strings. Do NOT change the
-    name of this function or what it returns.'''
-    
+        names as keys, and each entry a list of strings. Do NOT change the
+        name of this function or what it returns.'''
     presenters = dict()
     presenters_tweets = []
-    cnt = Counter()
     presenters_keywords = dict()
     stopwordsList = stopwords.words('english')
-    presenter_words = ['present', 'presents', 'presenting','presenter']
+    presenter_words = ['present', 'presents', 'presenting','presenter','presented' 'Present', 'Presenter', 'Presenting', 'Presented', 'Presents']
+    final_stoplist = ['GoldenGlobes', 'RT', 'VanityFair', 'LancomeUSA', 'Ambassadress' ]
+    official_tweets = []
     
     for award in OFFICIAL_AWARDS:
-        presenters[award] = []  #setting up output dictionary
+        presenters[award] = []
     
     for award in OFFICIAL_AWARDS:
-        award_list = award.split(' ') #convert into an iterable list
+        award_list = award.split(' ')
         award_values = []
         
         for word in award_list:
             if word not in stopwordsList: #extracting key words per award
                 award_values.append(word)
         presenters_keywords[award] = award_values
+    
+    if year == '2013':
+        tweets = tweets13
+    if year == '2015':
+        tweets = tweets15
+        
+    for tweet in tweets:
+        for word in tweet:
+            if word in final_stoplist:
+                tweet.remove(word)
 
-    for tweet in tweets13:
-        if 'presents' in tweet or 'present' in tweet or 'presenting' in tweet or 'presenter' in tweet:
+    for tweet in tweets:
+        if any(word in tweet for word in presenter_words):
             print("called")
             presenters_tweets.append(tweet)
 
@@ -205,18 +211,21 @@ def get_presenters(year):
         print award_tweets
     
         for tweet in award_tweets:
-            tweet_names = get_human_names(tweet) #get human names per tweet
+            tweet_names = get_human_names_general(tweet) #get human names per tweet
             print tweet_names #here you can see how Julia Roberts is not being recognized
             if number > 50:
                 break
-            for t in tweet_names: #count each name
-                cnt[t] += 1
-                number +=1
+    
+        for t in tweet_names: #count each name
+            award_counter[t] += 1
+            number +=1
+        print award_counter
+        presenters[w] = award_counter.most_common(2)
+        print presenters
+    
+    print presenters
+    return presenters
 
-        print cnt
-        return
-
-    return #presenters
 
 def get_sentiment():
     #my code here
@@ -227,11 +236,10 @@ def pre_ceremony():
     will use, and stores that data in your DB or in a json, csv, or
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
-    global tweets13
-    global officialTweets13
-    global tweets15
-    global officialTweets15
-    tweets13, officialTweets13, tweets15, officialTweets15 = getTweets()
+    global tweets13, punctTweets13, officialTweets13
+    global tweets15, punctTweets15, officialTweets15
+    
+    tweets13, officialTweets13, punctTweets13, tweets15, officialTweets15, punctTweets15 = getTweets()
     print "Pre-ceremony processing complete.\n"
     return
 

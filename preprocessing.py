@@ -10,6 +10,9 @@ tokenized_tweets2 = []
 official_tweets = []
 official_tweets2 = []
 
+punct_tweets = []
+punct_tweets2 = []
+
 def getTweets():
 
 	twitterHandle = raw_input("Official Award Show Twitter Account (i.e. @goldenglobes): ")
@@ -41,6 +44,7 @@ def getTweets():
 	tokenizer = RegexpTokenizer(r'\w+')
 
 	for tweet in text:
+		punct_tweets.append(nltk.wordpunct_tokenize(tweet))
 		if twitterHandle in tweet and 'RT' not in tweet:
 			temp_tweet = tokenizer.tokenize(tweet)
 			if twitterHandleText == temp_tweet[0]:
@@ -49,6 +53,7 @@ def getTweets():
 		tokenized_tweets.append(tweet)
 
 	for tweet in text2:
+		punct_tweets2.append(nltk.wordpunct_tokenize(tweet))
 		if twitterHandle in tweet and 'RT' not in tweet:
 			temp_tweet = tokenizer.tokenize(tweet)
 			if twitterHandleText == temp_tweet[0]:
@@ -56,4 +61,4 @@ def getTweets():
 		tweet = tokenizer.tokenize(tweet)
 		tokenized_tweets2.append(tweet)
 
-	return tokenized_tweets, official_tweets, tokenized_tweets2, official_tweets2
+	return tokenized_tweets, official_tweets, punct_tweets, tokenized_tweets2, official_tweets2, punct_tweets2
