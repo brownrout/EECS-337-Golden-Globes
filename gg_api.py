@@ -323,7 +323,8 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
-    get_humor('2013')
+    #get_humor('2013')
+
 
     while True:
         print '\n'
