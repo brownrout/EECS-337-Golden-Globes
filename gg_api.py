@@ -37,10 +37,10 @@ def get_human_names_hosts(text):
             name = ''
             person = []
 
-    for name in person_list:
-        last_first = HumanName(name).last + ', ' + HumanName(name).first
-        print last_first
-    
+#    for name in person_list:
+#        last_first = HumanName(name).last + ', ' + HumanName(name).first
+#        print last_first
+
     return person_list
 
 
@@ -90,7 +90,8 @@ def get_hosts(year):
 #    print threshold
 #
     for w,v in cnt.most_common(2):
-        hosts.append(w)
+        key_final = w.encode("utf-8")
+        hosts.append(key_final)
     
     print hosts
     return hosts
@@ -190,10 +191,7 @@ def get_presenters(year):
 
     for tweet in tweets:
         if any(word in tweet for word in presenter_words):
-            print("called")
             presenters_tweets.append(tweet)
-
-#print presenters_tweets
 
     for w in presenters:
         award_tweets = []
@@ -207,8 +205,6 @@ def get_presenters(year):
                 if winner in tweet:
                     award_tweets.append(tweet)
 
-        #print award_tweets
-
         for tweet in award_tweets:
             tweet_names = get_human_names_general(tweet) #get human names per tweet
             for t in tweet_names: #count each name
@@ -221,15 +217,15 @@ def get_presenters(year):
 
         final_presenters = []
         for key,v in award_counter.most_common(2):
-            final_presenters.append(key)
+            key_final = key.encode("utf-8")
+            print key_final
+            final_presenters.append(key_final)
 
         presenters[w] = final_presenters
+        print presenters
             
     print presenters
     return presenters
-
-
-
 
 
 def get_sentiment():
