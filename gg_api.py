@@ -7,6 +7,7 @@ from collections import Counter
 from nltk.corpus import stopwords
 from alchemyapi import AlchemyAPI
 from collections import OrderedDict
+import re
 
 alchemyapi = AlchemyAPI()
 tweets13 = []
@@ -15,46 +16,22 @@ tweets15 = []
 officialTweets15 = []
 punctTweets13 = []
 punctTweets15 = []
-stopwordsList = stopwords.words('english')
+stopwordsList = stopwords.words('english') + ['GoldenGlobes', 'Golden', 'Globes', 'Golden Globes', 'RT', 'VanityFair', 'golden', 'globes' '@', 'I', 'we', 'http', '://', '/', 'com']
+
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
-def get_human_names_hosts(text):
-    #print("called")
-    pos = nltk.pos_tag(text)
-    sentt = nltk.ne_chunk(pos, binary = False)
-    person = []
+def get_human_names(text):
+    print("called")
     person_list = []
-    name = ""
-    for subtree in sentt.subtrees(filter=lambda t: t.label() == 'PERSON'):
-        for leaf in subtree.leaves():
-            person.append(leaf[0])
-        if len(person) > 1:
-            for part in person:
-                name += part + ' '
-            if name[:-1] not in person_list:
-                person_list.append(name[:-1])
-            name = ''
-            person = []
+    tweet_names = []
+    person_list = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'," ".join(text))
+    for word in person_list:
+        if word not in stopwordsList:
+            tweet_names.append(word)
 
-#    for name in person_list:
-#        last_first = HumanName(name).last + ', ' + HumanName(name).first
-#        print last_first
+    return tweet_names
 
-    return person_list
-
-
-def get_human_names_general(text):
-    output = []
-    tagged = nltk.pos_tag(text)
-    namedEnt = nltk.ne_chunk(tagged, binary = True)
-    # print namedEnt
-    result = [' '.join([y[0] for y in x.leaves()]) for x in namedEnt.subtrees() if x.label() == "NE"]
-    # print result
-    for x in result:
-        if len(x.split()) == 2:
-            output.append(x)
-    return output
 
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
@@ -63,7 +40,7 @@ def get_hosts(year):
     host_tweets = []
     hosts = []
     number = 0
-    ignore = ["Hollywood", "Golden Globes"]
+    ignore = ["Hollywood", "Golden Globes", "Don"]
     
     if year == '2013':
         tweets = punctTweets13
@@ -76,7 +53,7 @@ def get_hosts(year):
             host_tweets.append(tweet)
 
     for tweet in host_tweets:
-        tweet_names = get_human_names_hosts(tweet)
+        tweet_names = get_human_names(tweet)
         if number > 10:
             break
         for t in tweet_names:
@@ -84,11 +61,6 @@ def get_hosts(year):
                 cnt[t] += 1
                 number +=1
 
-#    print cnt[max(cnt)]
-#    print cnt
-#    threshold = (cnt[max(cnt)]/2 * 1.5)
-#    print threshold
-#
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
         hosts.append(key_final)
@@ -234,7 +206,7 @@ def get_presenters(year):
     awards_keywords = dict()
     stopwordsList = stopwords.words('english')
     presenter_words = ['present', 'presents', 'presenting','presenter','presented' 'Present', 'Presenter', 'Presenting', 'Presented', 'Presents']
-    final_stoplist = ['GoldenGlobes', 'Golden Globes' 'RT', 'VanityFair']
+    final_stopwords = ['Fair', 'Best', 'She', 'He', 'Hooray' 'Supporting', 'Actor', 'Actress', 'The', 'A', 'Life', 'Good', 'Not', 'Drinking', 'Eating', 'And', 'Hooray', 'Nshowbiz', 'TMZ', 'VanityFair', 'Mejor', 'Better', 'Score', 'Drama', 'Comedy', 'So', 'Better']
     tweets = []
     
     winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
@@ -274,14 +246,16 @@ def get_presenters(year):
                     award_tweets.append(tweet)
 
         for tweet in award_tweets:
-            tweet_names = get_human_names_general(tweet) #get human names per tweet
+            tweet_names = get_human_names(tweet) #get human names per tweet
             for t in tweet_names: #count each name
                 
-                if t in winners[w] or t in final_stoplist:
+                if t in winners[w] or t in final_stopwords:
                     pass
                 else:
+#                    for w in t:
+#                        if w in final_stopwords:
+#                            t = t - w
                     award_counter[t] += 1
-        print award_counter
 
         final_presenters = []
         for key,v in award_counter.most_common(2):
@@ -290,8 +264,6 @@ def get_presenters(year):
             final_presenters.append(key_final)
 
         presenters[w] = final_presenters
-        print presenters
-            
     print presenters
     return presenters
 
