@@ -22,7 +22,6 @@ stopwordsList = stopwords.words('english') + ['GoldenGlobes', 'Golden', 'Globes'
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
 def get_human_names(text):
-    print("called")
     person_list = []
     tweet_names = []
     person_list = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'," ".join(text))
@@ -49,7 +48,6 @@ def get_hosts(year):
 
     for tweet in tweets:
         if 'host' in tweet:
-            #print("called")
             host_tweets.append(tweet)
 
     for tweet in host_tweets:
@@ -60,6 +58,7 @@ def get_hosts(year):
             if not any(w in t for w in ignore):
                 cnt[t] += 1
                 number +=1
+    print cnt
 
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
@@ -249,7 +248,7 @@ def get_presenters(year):
             tweet_names = get_human_names(tweet) #get human names per tweet
             for t in tweet_names: #count each name
                 
-                if t in winners[w] or t in final_stopwords:
+                if t in winners[w] or t in final_stopwords or t in presenter_words:
                     pass
                 else:
 #                    for w in t:
@@ -260,7 +259,6 @@ def get_presenters(year):
         final_presenters = []
         for key,v in award_counter.most_common(2):
             key_final = key.encode("utf-8")
-            print key_final
             final_presenters.append(key_final)
 
         presenters[w] = final_presenters
@@ -271,6 +269,40 @@ def get_presenters(year):
 def get_sentiment():
     #my code here
     return sentiments
+
+def get_humor(year):
+    '''humor is a list of one or more strings. Do NOT change the name
+        of this function or what it returns.'''
+    cnt = Counter()
+    humor_tweets = []
+    humor = []
+    number = 0
+    ignore = ["Hollywood", "Golden Globes", "The"]
+    humor_keywords = ["funny", "best joke", "comedian", "hilarious", "hysterical", "best jokes"]
+    
+    if year == '2013':
+        tweets = punctTweets13
+    if year == '2015':
+        tweets = punctTweets15
+    
+    for tweet in tweets:
+        if any(w in tweet for w in humor_keywords):
+            humor_tweets.append(tweet)
+
+#print humor_tweets
+
+    for tweet in humor_tweets:
+        tweet_names = get_human_names(tweet)
+        for t in tweet_names:
+            if not any(w in t for w in ignore):
+                cnt[t] += 1
+    for w,v in cnt.most_common(2):
+        key_final = w.encode("utf-8")
+        humor.append(key_final)
+    
+    print humor
+    return humor
+
 
 def pre_ceremony():
     '''This function loads/fetches/processes any data your program
@@ -291,6 +323,7 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     pre_ceremony()
+    get_humor('2013')
 
     while True:
         print '\n'
