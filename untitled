@@ -1,0 +1,85 @@
+   for tweet in award_tweets:
+        for word in award_list:
+            if word in tweet:
+                print tweet
+            for word in award_words:
+                if word in tweet:
+                    index = tweet.index(word)
+                    if index > last_index:
+                        last_index = index
+        for award in OFFICIAL_AWARDS:
+            winners[award] = tweet[(last_index+1):(last_index+3)]
+        print tweet[(last_index+1):(last_index+3)]
+        print last_index
+        index = 0
+        last_index = 0
+
+
+last_index = 0
+    for tweet in award_tweets:
+        for award in award_list:
+            for word in award:
+                if word in tweet:
+                    #print tweet
+                for word in award_words:
+                    if word in tweet:
+                        index = tweet.index(word)
+                        if index > last_index:
+                            last_index = index
+        for award in OFFICIAL_AWARDS:
+            winners[award] = tweet[(last_index+1):(last_index+3)]
+        print tweet[(last_index+1):(last_index+3)]
+        print last_index
+        index = 0
+        last_index = 0
+
+  index = 0
+    last_index = 0
+    for tweet in award_tweets:
+        if 'performance' in tweet or 'actor' in tweet or 'actress' in tweet or 'director' in tweet or 'song' in tweet:
+            for award in award_list:
+                for word in award:
+                    #if word in tweet:
+                    #print tweet
+                    for word in award_words:
+                        if word in tweet:
+                            index = tweet.index(word)
+                            if index > last_index:
+                                last_index = index
+            for award in OFFICIAL_AWARDS:
+                winners[award] = tweet[(last_index+1):(last_index+3)]
+            print tweet[(last_index+1):(last_index+3)]
+            print last_index
+            index = 0
+            last_index = 0
+        else:
+            for award in award_list:
+                tweet_movies = get_human_names(tweet)
+                for award in OFFICIAL_AWARDS:
+                    winners[award] = tweet_movies
+
+
+for tweet in award_tweets:
+        #if 'Performance' in tweet or 'Actor' in tweet or 'Actress' in tweet or 'Director' in tweet or 'Song' in tweet:
+            for award in award_list:
+                for word in award:
+                    if word in tweet:
+                        print tweet
+                    for word in award_words:
+                        if word in tweet:
+                            index = tweet.index(word)
+                            if index > last_index:
+                                last_index = index
+            for award in OFFICIAL_AWARDS:
+                winners[award] = tweet[(last_index+1):(last_index+3)]
+            print tweet[(last_index+1):(last_index+3)]
+            print last_index
+            index = 0
+            last_index = 0
+        else:
+            for award in award_list:
+                tweet_movies = get_human_names(tweet)
+                for word in award_words:
+                    if word in tweet_movies:
+                        tweet_movies.remove(word)
+                winners[award] = tweet_movies

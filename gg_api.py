@@ -153,8 +153,76 @@ def get_winner(year):
     '''Winners is a dictionary with the hard coded award
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
-    # Your code here
-    print "Unimplemented"
+    winners = dict()
+    stopwordsList = stopwords.words('english')
+    winner_words = ['win', 'wins', 'won','winner']
+    award_list = []
+    
+    for award in OFFICIAL_AWARDS:
+        award_list.append(award.split(' '))
+        winners[award] = []
+
+
+    awards = []
+    award_tweets = []
+    award_tweets_clean = []
+
+    #winningwords = ['win', 'Win', 'won', 'Won', 'winner', 'Winner', 'wins', 'Wins']
+    award_words = ['Best', 'best', 'Motion', 'motion', 'Picture', 'picture', 'Drama', 'drama', 'Performance', 'performance', 'Actress', 'actress', 'Actor', 'actor','Comedy', 'comedy', 'Musical', 'musical', 'Animated', 'animated', 'Feature', 'feature', 'Film', 'film', 'Foreign', 'foreign', 'Language', 'language', 'Supporting', 'supporting', 'Role', 'role', 'Director', 'director', 'Screenplay', 'screenplay', 'Original', 'orginal', 'Score', 'score', 'Song', 'song', 'Television', 'television', 'Series', 'series', 'Miniseries',  'miniseries', 'mini', 'Mini']
+    helper_words = ['by','By','An','an','In','in','A','a','For','for','-',':','Or','or']
+    
+    #print award_list
+    for word in helper_words:
+        if word in award_list:
+            award_list.remove(word)
+    for word in stopwordsList:
+        if word in award_list:
+            award_list.remove(word)
+
+
+    for tweet in officialTweets13:
+        if len(set(award_words).intersection(set(tweet))) > 3:
+            award_tweets.append(sorted(set(tweet), key=lambda x: tweet.index(x)))
+    
+
+    for tweet in award_tweets:
+        final_index = len(tweet)-1
+        if tweet[final_index] == "GoldenGlobes":
+            award_tweets_clean.append(tweet)
+    print award_tweets_clean
+
+    index = 0
+    last_index = 0
+    for tweet in award_tweets_clean:
+        #if 'Performance' in tweet or 'Actor' in tweet or 'Actress' in tweet or 'Director' in tweet or 'Song' in tweet:
+        for award in award_list:
+            for word in award:
+                #if word in tweet:
+                    #print tweet
+                for word in award_words:
+                    if word in tweet:
+                        index = tweet.index(word)
+                        if index > last_index:
+                            last_index = index
+                    award_string = ' '.join(award)
+                    winners[award_string] = tweet[(last_index+1):(last_index+3)]
+        print tweet[(last_index+1):(last_index+3)]
+        print last_index
+        index = 0
+        last_index = 0
+        #else:
+            #for award in award_list:
+                #tweet_movies = get_human_names(tweet)
+                #for word in award_words:
+                    #if word in tweet_movies:
+                        #tweet_movies.remove(word)
+                #award_string = ' '.join(award)
+                #winners[award_string] = tweet_movies
+
+
+    #print winners
+    return winners
+    #print "Unimplemented"
     return #winners
 
 def get_presenters(year):
