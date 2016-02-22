@@ -5,11 +5,14 @@ from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
 from nameparser.parser import HumanName
 from collections import Counter
 from nltk.corpus import stopwords
-from alchemyapi import AlchemyAPI
 from collections import OrderedDict
+
+from difflib import SequenceMatcher
+# from fuzzywuzzy import fuzz
+# from fuzzywuzzy import process
+
 import re
 
-alchemyapi = AlchemyAPI()
 tweets13 = []
 officialTweets13 = []
 tweets15 = []
@@ -20,6 +23,9 @@ stopwordsList = stopwords.words('english') + ['GoldenGlobes', 'Golden', 'Globes'
 
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 def get_human_names(text):
     person_list = []
@@ -58,7 +64,6 @@ def get_hosts(year):
             if not any(w in t for w in ignore):
                 cnt[t] += 1
                 number +=1
-    print cnt
 
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
@@ -98,19 +103,53 @@ def get_awards(year):
             if word not in award_words and word not in helper_words and tweet.index(word) >= first_index:
                 flag = False
             if word in award_words or word in helper_words and tweet.index(word) >= first_index and flag:
-                temp.append(word.lower())
+                if word not in helper_words:
+                    temp.append(word.lower())
         awardString = ' '.join(sorted(set(temp), key=lambda x: temp.index(x)))
         if awardString not in awards:
             awards.append(awardString)
     for x in awards:
         if x.split()[0] != 'best':
             awards.remove(x)
-    for x in awards:
-        x = x.split()
+
     awards = set(awards)
+
+
+    if year == '2015':
+        awards = remove_similar(list(awards))
+
+    print '\n'
     for x in awards:
         print x
+
     return awards
+
+def remove_similar(awardList):
+    removeAwards = []
+    for i in range(0, len(awardList) - 1):
+        for j in range(i, len(awardList)):
+            x = awardList[i]
+            y = awardList[j]
+            if x != y:
+                ratio = similar(x, y)
+                if ratio > .90:
+                    # print x + " is similar to " + y
+                    # print ratio
+                    # print '\n'
+                    if not ('actor' in x and 'actress' in y or 'actor' in y and 'actress' in x):
+                        removeAwards.append(x)
+                        print ratio
+                        print x
+                        print y
+                        print '\n'
+
+    removeAwards = set(removeAwards)
+
+    for x in removeAwards:
+        if x in awardList:
+            awardList.remove(x)
+
+    return awardList
 
 def get_nominees(year):
     '''Nominees is a dictionary with the hard coded award
@@ -266,9 +305,42 @@ def get_presenters(year):
     return presenters
 
 
-def get_sentiment():
-    #my code here
-    return sentiments
+def get_host_sentiments(year):
+
+    tweetCorpus = []
+    if year == '2013':
+        tweetCorpus = punctTweets13
+    elif year == '2015':
+        tweetCorpus = punctTweets15
+
+    hosts_scores = {}
+    for host in get_hosts(year):
+        hosts_scores[host] = [0,0,0]
+
+    for key in hosts_scores:
+        for tweet in tweetCorpus:
+            if key.split()[0] in tweet and key.split()[1] in tweet:
+                for word in tweet:
+                    if u'\U0001F600' in word or u'\U0001F601' in word or u'\U0001F603' in word:
+                        hosts_scores[key][0] += 1
+                    if u'\U0001F605' in word or u'\U0001F602' in word or u'\U0001F604' in word or u'\U0001F606' in word:
+                        hosts_scores[key][1] += 1
+                    if u'\U0001F612' in word or u'\U0001F621' in word or u'\U0001F615' in word:
+                        hosts_scores[key][2] += 1
+        print '\n' + key
+        zero_div = False
+        if hosts_scores[key][0] + hosts_scores[key][1] + hosts_scores[key][2] == 0:
+            zero_div = True
+        if not zero_div:  
+            print "Positive: " + '{0:.0%}'.format(hosts_scores[key][0] / float(hosts_scores[key][0] + hosts_scores[key][1] + hosts_scores[key][2]))
+            print "Negative: " + '{0:.0%}'.format(hosts_scores[key][2] / float(hosts_scores[key][0] + hosts_scores[key][1] + hosts_scores[key][2]))
+            print "Funny:    " + '{0:.0%}'.format(hosts_scores[key][1] / float(hosts_scores[key][0] + hosts_scores[key][1] + hosts_scores[key][2]))
+        else:
+            print "Positive: 0%"
+            print "Negative: 0%"
+            print "Funny:    0%"
+
+    return hosts_scores
 
 def get_humor(year):
     '''humor is a list of one or more strings. Do NOT change the name
@@ -288,8 +360,6 @@ def get_humor(year):
     for tweet in tweets:
         if any(w in tweet for w in humor_keywords):
             humor_tweets.append(tweet)
-
-#print humor_tweets
 
     for tweet in humor_tweets:
         tweet_names = get_human_names(tweet)
@@ -322,14 +392,13 @@ def main():
     and then run gg_api.main(). This is the second thing the TA will
     run when grading. Do NOT change the name of this function or
     what it returns.'''
-    pre_ceremony()
-    #get_humor('2013')
 
+    pre_ceremony()
 
     while True:
         print '\n'
         year = raw_input("Which year: ")
-        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n"
+        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n"
         user_input = input("Choose a function: ")
         if (user_input == 1):
             hosts = get_hosts(year)
@@ -338,6 +407,10 @@ def main():
         elif (user_input == 3): {get_nominees(year)}
         elif (user_input == 4): {get_winners(year)}
         elif (user_input == 5): {get_presenters(year)}
+        elif (user_input == 6):
+            sentiments = get_host_sentiments(year)
+        elif (user_input == 7):
+            humor = sentiments = get_humor(year)
         else:
             print "Invalid choice\n"
     
