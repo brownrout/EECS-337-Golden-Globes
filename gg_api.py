@@ -44,6 +44,17 @@ def get_human_names(text):
     return tweet_names
 
 
+def get_human_names_faster(text):
+    person_list = []
+    tweet_names = []
+    person_list = re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'," ".join(text))
+    for word in person_list:
+        if word not in stopwordsList:
+            tweet_names.append(word)
+
+    return tweet_names
+
+
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
         of this function or what it returns.'''
@@ -289,7 +300,7 @@ def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
         names as keys, and each entry a list of strings. Do NOT change the
         name of this function or what it returns.'''
-    print "getting this year's presenters..."
+    print "getting this year's presenters (this takes a bit longer)..."
     presenters = dict()
     presenters_tweets = []
     awards_keywords = dict()
@@ -398,8 +409,8 @@ def get_humor(year):
     humor_tweets = []
     humor = []
     number = 0
-    ignore = ["Hollywood", "Golden Globes", "The"]
-    humor_keywords = ["funny", "best joke", "comedian", "hilarious", "hysterical", "best jokes"]
+    ignore = ["Hollywood", "Golden Globes", "The", "This"]
+    humor_keywords = ["funny", "best joke", "hilarious", "hysterical", "best jokes", "haha"]
     
     if year == '2013':
         tweets = punctTweets13
@@ -410,11 +421,16 @@ def get_humor(year):
         if any(w in tweet for w in humor_keywords):
             humor_tweets.append(tweet)
 
-    tweet_names = get_human_names(humor_tweets)
+    for tweet in humor_tweets:
+        tweet_names = get_human_names_faster(tweet)
 
-    for t in tweet_names:
-        if not any(w in t for w in ignore):
-            cnt[t] += 1
+        for t in tweet_names:
+            if not any(w in t for w in ignore):
+                if len(t.split()) != 2:
+                    pass
+                else:
+                    cnt[t] += 1
+
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
         humor.append(key_final)
@@ -454,8 +470,9 @@ def main():
         elif (user_input == 2):
             awards = get_awards(year)
         elif (user_input == 3): {get_nominees(year)}
-        elif (user_input == 4): {get_winners(year)}
-        elif (user_input == 5): {get_presenters(year)}
+        elif (user_input == 4): {get_winner(year)}
+        elif (user_input == 5):
+            presenters = get_presenters(year)
         elif (user_input == 6):
             sentiments = get_host_sentiments(year)
         elif (user_input == 7):
