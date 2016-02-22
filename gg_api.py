@@ -1,6 +1,7 @@
 import sys
 import nltk
 from preprocessing import *
+from postprocessing import *
 from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
 from nameparser.parser import HumanName
 from collections import Counter
@@ -17,9 +18,8 @@ officialTweets15 = []
 punctTweets13 = []
 punctTweets15 = []
 stopwordsList = stopwords.words('english') + ['GoldenGlobes', 'Golden', 'Globes', 'Golden Globes', 'RT', 'VanityFair', 'golden', 'globes' '@', 'I', 'we', 'http', '://', '/', 'com', 'Best', 'best', 'Looking','Nice', 'Most', 'Pop', 'We', 'Love', 'Awkward','Piece', 'While', 'Boo', 'And' 'The', 'Gq', 'Hollywood', 'Watching', 'Hooray', 'That', 'Yeah', 'Can', 'What', 'NShowBiz', 'She', 'Mejor', 'Did', 'Vanity', 'Fair', 'Drama', 'MotionPicture', 'News', 'Take', 'Before', 'Director', 'Award', 'Movie Award', 'Music Award', 'Best Director', 'Best Actor', 'Best Actress', 'Oooh', 'Am', ]
-
-
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
+
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -446,11 +446,15 @@ def pre_ceremony():
     will use, and stores that data in your DB or in a json, csv, or
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
+    print "Pre-ceremony processing complete.\n"
+    return
+
+def post_ceremony():
+    '''This loads information that is only available after the award ceremony -- i.e. the corpus'''
+    print "loading up the corpuses..."
     global tweets13, punctTweets13, officialTweets13
     global tweets15, punctTweets15, officialTweets15
-    
     tweets13, officialTweets13, punctTweets13, tweets15, officialTweets15, punctTweets15 = getTweets()
-    print "Pre-ceremony processing complete.\n"
     return
 
 def main():
@@ -459,8 +463,6 @@ def main():
     and then run gg_api.main(). This is the second thing the TA will
     run when grading. Do NOT change the name of this function or
     what it returns.'''
-
-    pre_ceremony()
 
     while True:
         print '\n'
@@ -487,4 +489,5 @@ def main():
     return
 
 if __name__ == '__main__':
+    post_ceremony()
     main()
