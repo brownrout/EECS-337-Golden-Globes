@@ -15,8 +15,7 @@ punct_tweets2 = []
 
 def getTweets():
 
-	twitterHandle = raw_input("Official Award Show Twitter Account (i.e. @goldenglobes): ")
-	twitterHandleText = twitterHandle[1:]
+	twitterHandleText = '@goldenglobes'
 	
 	corpus = open('gg2013.json')
 	corpus2 = open('gg2015.json')
