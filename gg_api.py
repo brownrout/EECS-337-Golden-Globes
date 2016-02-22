@@ -23,6 +23,7 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
+# http://stackoverflow.com/questions/17388213/python-string-similarity-with-probability
 
 def get_human_names(text):
     i = IMDb()
@@ -192,6 +193,7 @@ def remove_similar(awardList):
             y = awardList[j]
             if x != y:
                 ratio = similar(x, y)
+                #http://stackoverflow.com/questions/17388213/python-string-similarity-with-probability
                 if ratio > .85:
                     # print x + " is similar to " + y
                     # print ratio
@@ -463,7 +465,7 @@ def main():
     while True:
         print '\n'
         year = raw_input("Which year: ")
-        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n7. Get Awards (Alt)\n"
+        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n8. Get Awards (Alt)\n"
         user_input = input("Choose a function: ")
         if (user_input == 1):
             hosts = get_hosts(year)
