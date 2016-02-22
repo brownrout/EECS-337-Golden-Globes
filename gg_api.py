@@ -285,7 +285,6 @@ def get_winner(year):
     '''Winners is a dictionary with the hard coded award
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
-    print "getting winners..."
     winners = dict()
     stopwordsList2 = stopwords.words('english')
     winner_words = ['win', 'wins', 'won','winner']
@@ -333,16 +332,17 @@ def get_winner(year):
         final_index = len(tweet)-1
         if tweet[final_index] == "GoldenGlobes":
             award_tweets_clean.append(tweet)
-    print award_tweets_clean
+    #print award_tweets_clean
 
     extra_words = ["GoldenGlobes", "Pixar"]
 
     index = 0
     last_index = 0
     for award in award_list:
-        print award
         result = []
-        all_potential_awards = dict()
+        flag = True
+        tweet_movies=[]
+
         award_clean = award
         for word in stopwordsList2:
             if word in award_clean:
@@ -356,64 +356,67 @@ def get_winner(year):
             #print ' '.join(tweet).lower()                 
             last_index = 0
             current_award = []
-            temptweet = []
             counter = 0
-            for word in helper_words:
-                if word in tweet:
-                    tweet.remove(word)
-            for word in tweet:
-                temptweet.append(word.lower())
+            if flag == True: 
+                if 'Performance' in tweet or 'Actor' in tweet or 'Actress' in tweet or 'Director' in tweet or 'Song' in tweet:
+                    for word in award_words:
+                        if word in tweet:
+                            index = tweet.index(word)
+                            current_award.append(word)
+                            if index > last_index:
+                                last_index = index
+                    for word in current_award:
+                        if word.lower() in award_clean:
+                            counter += 1
+                    print current_award
+                    print len(current_award)
+                    print counter
+                    if counter == len(current_award):
+                        print "called"
+                        award_string = ' '.join(award)
+                        tweet_movies = tweet[(last_index+1):(last_index+3)]
+                        winners[award_string] = tweet_movies
+                        flag == False
 
-            for word in award_words:
-                if word in tweet:
-                    index = tweet.index(word)
-                    current_award.append(word)
-                    if index > last_index:
-                        last_index = index
+                # else:
+                #     for word in award_words:
+                #         if word in tweet:
+                #             index = tweet.index(word)
+                #             current_award.append(word)
+                #             if index > last_index:
+                #                 last_index = index
+                #     for word in current_award:
+                #         if word.lower() in award_clean:
+                #             counter += 1
+                #     print current_award
+                #     print len(current_award)
+                #     print counter
+                #     for word in award_words:
+                #         if word in tweet:
+                #             tweet.remove(word)
+                #     for word in extra_words:
+                #         if word in tweet:
+                #             tweet.remove(word)
+                #     if counter >= len(current_award)-1:
+                #         award_string = ' '.join(award)
+                #         tweet_movies = get_human_names_faster(tweet)
+                #         for word in tweet_movies:
+                #             if "Pixar" in word:
+                #                 tweet_movies.remove(word)
+                #         winners[award_string] = tweet_movies
+                #         flag == False
+                        
 
-            all_potential_awards[last_index] = tweet
-        print all_potential_awards
-        max_index = 0
-        final_tweet = []
-        max_counter = 0
+                
+                print tweet
+            
 
-        for i in all_potential_awards:
-            #print all_potential_awards[i]
-            itemp = []
-            for word in all_potential_awards[i]:
-                itemp.append(word.lower()) 
-            counter = 0
-            for word in award_clean:
-                if word in itemp:
-                    counter+=1
-            #print counter
-            if counter > max_counter:
-                max_index = i
-                final_tweet = all_potential_awards[i]
-                max_counter = counter
-        if 'Performance' in final_tweet or 'Actor' in final_tweet or 'Actress' in final_tweet or 'Director' in final_tweet or 'Song' in final_tweet:
-            tweet_movies = final_tweet[(max_index+1):(max_index+3)]
-
-        if 'Performance' not in final_tweet and 'Actor' not in final_tweet and 'Actress' not in final_tweet and 'Director' not in final_tweet and 'Song' not in final_tweet:
-            for word in award_words:
-                if word in final_tweet:
-                    final_tweet.remove(word)
-            for word in extra_words:
-                if word in final_tweet:
-                    final_tweet.remove(word)
-            tweet_movies = get_human_names_faster(final_tweet)
-            for word in tweet_movies:
-                if "Pixar" in word:
-                    tweet_movies.remove(word) 
-        #print tweet_movies
-        award_string = ' '.join(award)
-        winners[award_string] = tweet_movies
-        
+    
+        #print winners
         #print tweet[(last_index+1):(last_index+3)]
         #print last_index
 
-
-
+    print winners
     return winners
 
 def get_presenters(year):
