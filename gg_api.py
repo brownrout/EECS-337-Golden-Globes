@@ -257,11 +257,16 @@ def get_nominees(year):
         tweets = punctTweets15
     
     
-    pat = re.compile('.*(hop(ed|ing|e|es))\s(\w+)\s(w(o|i)(n|ns|nning)).*', re.IGNORECASE)
+    pat = re.compile('.*(hop(ed|ing|e|es))\s(@)?(\w+)\s(w(o|i)(n|ns|nning)).*', re.IGNORECASE)
 
     for tweet in tweets:
         if any(word in tweet for word in nominee_words):
             nominees_tweets.append(tweet)
+        elif re.search(pat, ' '.join(tweet)):
+            print "entered"
+            nominees_tweets.append(tweet)
+
+    print nominees_tweets
 
     for w in nominees:
         award_tweets = []
