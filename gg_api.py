@@ -8,10 +8,7 @@ from nltk.corpus import stopwords
 from collections import OrderedDict
 import re
 from imdb import IMDb, IMDbError
-
 from difflib import SequenceMatcher
-# from fuzzywuzzy import fuzz
-# from fuzzywuzzy import process
 
 tweets13 = []
 officialTweets13 = []
@@ -124,14 +121,56 @@ def get_awards(year):
 
     awards = set(awards)
 
-
-    if year == '2015':
-        awards = remove_similar(list(awards))
-
     print '\n'
     for x in awards:
         print x
 
+    return awards
+
+def get_awards_alt(year):
+    '''Awards is a list of strings. Do NOT change the name
+    of this function or what it returns.'''
+
+    award_words = ['Best', 'best', 'Motion', 'motion', 'Picture', 'picture', 'Drama', 'drama', 'Performance', 'performance', 'Actress', 'actress', 'Actor', 'actor','Comedy', 'comedy', 'Musical', 'musical', 'Animated', 'animated', 'Feature', 'feature', 'Film', 'film', 'Foreign', 'foreign', 'Language', 'language', 'Supporting', 'supporting', 'Role', 'role', 'Director', 'director', 'Screenplay', 'screenplay', 'Original', 'orginal', 'Score', 'score', 'Song', 'song', 'Television', 'television', 'Series', 'series', 'Mini-series',  'mini-series', 'mini', 'Mini']
+    helper_words = ['by','By','An','an','In','in','A','a','For','for','-',':','Or','or']
+    
+    officialTweets = []
+    if year == '2013':
+        officialTweets = officialTweets13
+    if year == '2015':
+        officialTweets = officialTweets15
+    awards = []
+    award_tweets = []
+    for tweet in officialTweets:
+        if len(set(award_words).intersection(set(tweet))) > 3:
+            award_tweets.append(sorted(set(tweet), key=lambda x: tweet.index(x)))
+    for tweet in award_tweets:
+        first_index = len(tweet)-1
+        for word in award_words:
+            if word in tweet:
+                index = tweet.index(word)
+                if index < first_index:
+                    first_index = index
+        flag = True
+        temp = []
+        for word in tweet:
+            if word not in award_words and word not in helper_words and tweet.index(word) >= first_index:
+                flag = False
+            if word in award_words or word in helper_words and tweet.index(word) >= first_index and flag:
+                if word not in helper_words:
+                    temp.append(word.lower())
+        awardString = ' '.join(sorted(set(temp), key=lambda x: temp.index(x)))
+        if awardString not in awards:
+            awards.append(awardString)
+    for x in awards:
+        if x.split()[0] != 'best':
+            awards.remove(x)
+    awards = set(awards)
+    if year == '2015':
+        awards = remove_similar(list(awards))
+    print '\n'
+    for x in awards:
+        print x
     return awards
 
 def remove_similar(awardList):
@@ -142,16 +181,17 @@ def remove_similar(awardList):
             y = awardList[j]
             if x != y:
                 ratio = similar(x, y)
-                if ratio > .90:
+                if ratio > .85:
                     # print x + " is similar to " + y
                     # print ratio
                     # print '\n'
                     if not ('actor' in x and 'actress' in y or 'actor' in y and 'actress' in x):
-                        removeAwards.append(x)
-                        print ratio
-                        print x
-                        print y
-                        print '\n'
+                        if not ('actor' in x and 'actor' not in y or 'actress' in x and 'actress' not in y):
+                            removeAwards.append(x)
+                            print ratio
+                            print x
+                            print y
+                            print '\n'
 
     removeAwards = set(removeAwards)
 
@@ -407,7 +447,7 @@ def main():
     while True:
         print '\n'
         year = raw_input("Which year: ")
-        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n"
+        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n7. Get Awards (Alt)\n"
         user_input = input("Choose a function: ")
         if (user_input == 1):
             hosts = get_hosts(year)
@@ -419,7 +459,9 @@ def main():
         elif (user_input == 6):
             sentiments = get_host_sentiments(year)
         elif (user_input == 7):
-            humor = sentiments = get_humor(year)
+            humor = get_humor(year)
+        elif (user_input == 8):
+            alt_awards = get_awards_alt(year)
         else:
             print "Invalid choice\n"
     
