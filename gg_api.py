@@ -30,16 +30,22 @@ def get_human_names(text):
     tweet_names = []
     person_list = []
     #get potential names that are consecutive capital words
+    print "get human names"
     for tweet in text:
         person_list += re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'," ".join(tweet))
     
     #remove
+    print "first loop done"
     for word in person_list:
         if word not in stopwordsList:
             if word in tweet_names:
+                print word
                 tweet_names.append(word)
             elif i.search_person(word) != []:
+                print word
                 tweet_names.append(word)
+
+    print "second loop done"
 
     return tweet_names
 
@@ -217,8 +223,57 @@ def get_nominees(year):
     names as keys, and each entry a list of strings. Do NOT change
     the name of this function or what it returns.'''
     # Your code here
-    print "Unimplemented"
-    return #nominees
+    nominees = dict()
+    nominees_tweets = []
+    nominee_words = ['nominee', 'nominees', 'nominating', 'nominated', 'nominates', 'Nominee', 'Nominees', 'Nominating', 'Nominated', 'Nominates', 'should have won', 'Should have won']
+    final_stopwords = ['Fair', 'Best', 'She', 'He', 'Hooray' 'Supporting', 'Actor', 'Actress', 'The', 'A', 'Life', 'Good', 'Not', 'Drinking', 'Eating', 'And', 'Hooray', 'Nshowbiz', 'TMZ', 'VanityFair', 'Mejor', 'Better', 'Score', 'Movie', 'Film', 'Song' 'Drama', 'Comedy', 'So', 'Better', 'Netflix', 'Someone', 'Mc', 'Newz', 'Season', 'Should']
+    tweets = []
+    winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
+    
+    for award in OFFICIAL_AWARDS:
+        nominees[award] = []
+
+    if year == '2013':
+        tweets = punctTweets13
+    if year == '2015':
+        tweets = punctTweets15
+    
+    for tweet in tweets:
+        if any(word in tweet for word in nominee_words):
+            nominees_tweets.append(tweet)
+
+    for w in nominees:
+        print "award loop enter"
+        award_tweets = []
+        award_counter = Counter()
+        
+        temp_list = winners[w].split(' ')
+        
+        for tweet in nominees_tweets:
+            for winner in temp_list:
+                if winner in tweet:
+                    award_tweets.append(tweet)
+
+        tweet_names = get_human_names(award_tweets) #get human names per tweet
+        
+        print "fetched tweet_names"
+        for t in tweet_names: #count each name
+            print "vetting name"
+            if t in winners[w] or t in final_stopwords or t in nominee_words:
+                pass
+            else:
+                award_counter[t] += 1
+
+        final_nominees = []
+        for key,v in award_counter.most_common(5):
+            key_final = key.encode("utf-8")
+            final_nominees.append(key_final)
+        
+        nominees[w] = final_nominees
+
+    print nominees
+    return nominees
+
 
 def get_winner(year):
     '''Winners is a dictionary with the hard coded award
@@ -310,18 +365,8 @@ def get_presenters(year):
     tweets = []
     winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
     
-    
     for award in OFFICIAL_AWARDS:
         presenters[award] = []
-    
-    for award in OFFICIAL_AWARDS:
-        award_list = award.split(' ')
-        award_values = []
-        
-        for word in award_list:
-            if word not in stopwordsList: #extracting key words per award
-                award_values.append(word)
-        awards_keywords[award] = award_values
     
     if year == '2013':
         tweets = punctTweets13
@@ -469,7 +514,8 @@ def main():
             hosts = get_hosts(year)
         elif (user_input == 2):
             awards = get_awards(year)
-        elif (user_input == 3): {get_nominees(year)}
+        elif (user_input == 3):
+            nominees = get_nominees(year)
         elif (user_input == 4): {get_winner(year)}
         elif (user_input == 5):
             presenters = get_presenters(year)
