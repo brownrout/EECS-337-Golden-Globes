@@ -285,11 +285,11 @@ def get_winner(year):
     '''Winners is a dictionary with the hard coded award
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
+    print "getting winners..."
     winners = dict()
     stopwordsList2 = stopwords.words('english')
     winner_words = ['win', 'wins', 'won','winner']
     award_list = []
-    flag = False
     
     for award in OFFICIAL_AWARDS:
         winners[award] = []
@@ -372,9 +372,7 @@ def get_winner(year):
                         last_index = index
 
             all_potential_awards[last_index] = tweet
-        #print all_potential_awards
-
-
+        print all_potential_awards
         max_index = 0
         final_tweet = []
         max_counter = 0
@@ -403,7 +401,7 @@ def get_winner(year):
             for word in extra_words:
                 if word in final_tweet:
                     final_tweet.remove(word)
-            tweet_movies = get_proper_nouns(final_tweet)
+            tweet_movies = get_human_names_faster(final_tweet)
             for word in tweet_movies:
                 if "Pixar" in word:
                     tweet_movies.remove(word) 
@@ -411,9 +409,6 @@ def get_winner(year):
         award_string = ' '.join(award)
         winners[award_string] = tweet_movies
         
-        if flag == True:
-            pass
-        flag = True
         #print tweet[(last_index+1):(last_index+3)]
         #print last_index
 
@@ -591,7 +586,8 @@ def main():
             awards = get_awards(year)
         elif (user_input == 3):
             nominees = get_nominees(year)
-        elif (user_input == 4): {get_winner(year)}
+        elif (user_input == 4):
+            get_winner(year)
         elif (user_input == 5):
             presenters = get_presenters(year)
         elif (user_input == 6):
