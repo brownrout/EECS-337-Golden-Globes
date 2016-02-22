@@ -558,7 +558,7 @@ def get_bestdressed(year):
     bestdressed = []
     number = 0
     ignore = ["Hollywood", "Golden Globes", "The", "This"]
-    bestdressed_keywords = ["gorgeous", "beautiful", "amazing dress", "looks great", "great outfit"]
+    bestdressed_keywords = ["gorgeous", "beautiful", "amazing dress", "looks great", "great outfit", "best dressed"]
     
     if year == '2013':
         tweets = punctTweets13
@@ -584,6 +584,45 @@ def get_bestdressed(year):
     
     print bestdressed
     return bestdressed
+
+
+def get_worstdressed(year):
+    '''humor is a list of one or more strings. Do NOT change the name
+        of this function or what it returns.'''
+    print "getting the worst dressed people..."
+    
+    cnt = Counter()
+    worstdressed_tweets = []
+    worstdressed = []
+    number = 0
+    ignore = ["Hollywood", "Golden Globes", "The", "This"]
+    worstdressed_keywords = ["ugly dress", "ugliest dress", "bad outfit", "weird shoes", "worst dressed", "badly fitting"]
+    
+    if year == '2013':
+        tweets = punctTweets13
+    if year == '2015':
+        tweets = punctTweets15
+    
+    for tweet in tweets:
+        if any(w in tweet for w in worstdressed_keywords):
+            worstdressed_tweets.append(tweet)
+
+    print worstdressed_tweets
+    for tweet in worstdressed_tweets:
+        tweet_names = get_human_names_faster(tweet)
+        for t in tweet_names:
+            if not any(w in t for w in ignore):
+                if len(t.split()) != 2:
+                    pass
+                else:
+                    cnt[t] += 1
+
+    for w,v in cnt.most_common(10):
+        key_final = w.encode("utf-8")
+        worstdressed.append(key_final)
+    
+    print worstdressed
+    return worstdressed
 
 
 def pre_ceremony():
@@ -615,7 +654,7 @@ def main():
     while True:
         print '\n'
         year = raw_input("Which year: ")
-        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n8. Get Awards (Alt)\n9. Get Best Dressed\n"
+        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n8. Get Awards (Alt)\n9. Get Best Dressed\n10. Get Worst Dressed\n"
         user_input = input("Choose a function: ")
         if (user_input == 1):
             hosts = get_hosts(year)
@@ -634,7 +673,9 @@ def main():
         elif (user_input == 8):
             alt_awards = get_awards_alt(year)
         elif (user_input == 9):
-            alt_awards = get_bestdressed(year)
+            best_dressed = get_bestdressed(year)
+        elif (user_input == 10):
+            worst_dressed = get_worstdressed(year)
         else:
             print "Invalid choice\n"
     
