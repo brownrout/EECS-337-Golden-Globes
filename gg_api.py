@@ -548,6 +548,43 @@ def get_humor(year):
     print humor
     return humor
 
+def get_bestdressed(year):
+    '''humor is a list of one or more strings. Do NOT change the name
+        of this function or what it returns.'''
+    print "getting the best dressed people..."
+    
+    cnt = Counter()
+    bestdressed_tweets = []
+    bestdressed = []
+    number = 0
+    ignore = ["Hollywood", "Golden Globes", "The", "This"]
+    bestdressed_keywords = ["gorgeous", "beautiful", "amazing dress", "looks great", "great outfit"]
+    
+    if year == '2013':
+        tweets = punctTweets13
+    if year == '2015':
+        tweets = punctTweets15
+    
+    for tweet in tweets:
+        if any(w in tweet for w in bestdressed_keywords):
+            bestdressed_tweets.append(tweet)
+
+    for tweet in bestdressed_tweets:
+        tweet_names = get_human_names_faster(tweet)
+        for t in tweet_names:
+            if not any(w in t for w in ignore):
+                if len(t.split()) != 2:
+                    pass
+                else:
+                    cnt[t] += 1
+
+    for w,v in cnt.most_common(10):
+        key_final = w.encode("utf-8")
+        bestdressed.append(key_final)
+    
+    print bestdressed
+    return bestdressed
+
 
 def pre_ceremony():
     '''This function loads/fetches/processes any data your program
@@ -578,7 +615,7 @@ def main():
     while True:
         print '\n'
         year = raw_input("Which year: ")
-        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n8. Get Awards (Alt)\n"
+        print "\nOptions:\n1. Get Hosts\n2. Get Awards\n3. Get Nominees\n4. Get Winners\n5. Get Presenters\n6. Get Host Sentiment\n7. Get Humor\n8. Get Awards (Alt)\n9. Get Best Dressed\n"
         user_input = input("Choose a function: ")
         if (user_input == 1):
             hosts = get_hosts(year)
@@ -596,6 +633,8 @@ def main():
             humor = get_humor(year)
         elif (user_input == 8):
             alt_awards = get_awards_alt(year)
+        elif (user_input == 9):
+            alt_awards = get_bestdressed(year)
         else:
             print "Invalid choice\n"
     
