@@ -31,12 +31,10 @@ def get_human_names(text):
     tweet_names = []
     person_list = []
     #get potential names that are consecutive capital words
-    print "get human names"
     for tweet in text:
         person_list += re.findall('([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'," ".join(tweet))
     
     #remove
-    print "first loop done"
     for word in person_list:
         if word not in stopwordsList:
             if word in tweet_names:
@@ -46,7 +44,6 @@ def get_human_names(text):
                 print word
                 tweet_names.append(word)
 
-    print "second loop done"
 
     return tweet_names
 
@@ -141,12 +138,16 @@ def get_awards(year):
         if x.split()[0] != 'best':
             awards.remove(x)
 
-    awards = set(awards)
+    set_awards = set(awards)
+    awards = []
+    encoded_awards = []
 
     print '\n'
-    for x in awards:
-        print x
-
+    for x in set_awards:
+        x_encoded = x.encode("utf-8")
+        encoded_awards.append(x_encoded)
+    awards = encoded_awards
+    print awards
     return awards
 
 def get_awards_alt(year):
@@ -187,12 +188,21 @@ def get_awards_alt(year):
     for x in awards:
         if x.split()[0] != 'best':
             awards.remove(x)
-    awards = set(awards)
+
+
+    set_awards = set(awards)
+    awards = []
+    encoded_awards = []
+
     if year == '2015':
-        awards = remove_similar(list(awards))
+        set_awards = remove_similar(list(set_awards))
     print '\n'
-    for x in awards:
-        print x
+    for x in set_awards:
+        x_encoded = x.encode("utf-8")
+        encoded_awards.append(x_encoded)
+
+    awards = encoded_awards
+    print awards
     return awards
 
 def remove_similar(awardList):
@@ -474,7 +484,6 @@ def get_presenters(year):
 
 
 def get_host_sentiments(year):
-
     tweetCorpus = []
     if year == '2013':
         tweetCorpus = punctTweets13
@@ -484,6 +493,8 @@ def get_host_sentiments(year):
     hosts_scores = {}
     for host in get_hosts(year):
         hosts_scores[host] = [0,0,0]
+
+    print "analyzing sentiment through emojis..."
 
     for key in hosts_scores:
         for tweet in tweetCorpus:
@@ -578,7 +589,7 @@ def get_bestdressed(year):
                 else:
                     cnt[t] += 1
 
-    for w,v in cnt.most_common(10):
+    for w,v in cnt.most_common(5):
         key_final = w.encode("utf-8")
         bestdressed.append(key_final)
     
@@ -595,8 +606,8 @@ def get_worstdressed(year):
     worstdressed_tweets = []
     worstdressed = []
     number = 0
-    ignore = ["Hollywood", "Golden Globes", "The", "This"]
-    worstdressed_keywords = ["ugly dress", "ugliest dress", "bad outfit", "weird shoes", "worst dressed", "badly fitting"]
+    ignore = ["Hollywood", "Golden Globes", "The", "This", "GoldenGlobes", "Golden", "Globes"]
+    worstdressed_keywords = ["worst outfit", "bad fashion", "weird hair", "bad shoes", "bad hair", "gross shoes", "gross hair", "gross outfit", "bad outfit", "bad attire", "worst attire", "gross"]
     
     if year == '2013':
         tweets = punctTweets13
@@ -617,7 +628,7 @@ def get_worstdressed(year):
                 else:
                     cnt[t] += 1
 
-    for w,v in cnt.most_common(10):
+    for w,v in cnt.most_common(3):
         key_final = w.encode("utf-8")
         worstdressed.append(key_final)
     
