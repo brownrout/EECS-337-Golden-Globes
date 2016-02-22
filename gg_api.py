@@ -260,7 +260,7 @@ def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
         names as keys, and each entry a list of strings. Do NOT change the
         name of this function or what it returns.'''
-    print "getting this year's presenters..."
+    print "getting this year's presenters (this takes a bit longer)..."
     presenters = dict()
     presenters_tweets = []
     awards_keywords = dict()
