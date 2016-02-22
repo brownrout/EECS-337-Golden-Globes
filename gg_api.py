@@ -59,6 +59,10 @@ def get_human_names_faster(text):
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
         of this function or what it returns.'''
+
+    if len(punctTweets13) == 0:
+        post_ceremony()
+
     print "Getting hosts..."
 
     cnt = Counter()
@@ -447,6 +451,8 @@ def pre_ceremony():
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
     print "Pre-ceremony processing complete.\n"
+    print "Calling post-ceremony processing"
+    post_ceremony()
     return
 
 def post_ceremony():
@@ -455,6 +461,7 @@ def post_ceremony():
     global tweets13, punctTweets13, officialTweets13
     global tweets15, punctTweets15, officialTweets15
     tweets13, officialTweets13, punctTweets13, tweets15, officialTweets15, punctTweets15 = getTweets()
+    print "post-ceremony processing complete."
     return
 
 def main():
@@ -489,5 +496,5 @@ def main():
     return
 
 if __name__ == '__main__':
-    post_ceremony()
+    pre_ceremony()
     main()
