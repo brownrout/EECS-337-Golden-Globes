@@ -382,12 +382,12 @@ def get_winner(year):
 
 
     # Sanity Check
-    for xx in sorted_award_tweets_clean:
-        print xx
-    print '\n'
-    for key in sorted(winners, key = len, reverse = True):
-        print key
-    print '\n\n'
+    # for xx in sorted_award_tweets_clean:
+    #     print xx
+    # print '\n'
+    # for key in sorted(winners, key = len, reverse = True):
+    #     print key
+    # print '\n\n'
 
     # Time to map winners to awards
     for tweet in sorted_award_tweets_clean:
@@ -440,9 +440,9 @@ def get_winner(year):
                 if best_match != "":
                     # Assign the name to the award
                     winners[best_match] = (' ').join(actor_name)
-                    print "set " + winners[best_match] + " to: " + best_match
+                    # print "set " + winners[best_match] + " to: " + best_match
             else:
-                print (' ').join(actor_name) + " already won an award!"
+                # print (' ').join(actor_name) + " already won an award!"
 
         else:
             # Look for tweets about awards not given to people
@@ -493,11 +493,11 @@ def get_winner(year):
                     if best_match != "":
                         # Assign the name to the award
                         winners[best_match] = (' ').join(movie_name)
-                        print "set " + winners[best_match] + " to: " + best_match
+                        #print "set " + winners[best_match] + " to: " + best_match
                 else:
-                    print (' ').join(movie_name) + " already won an award!"
+                    #print (' ').join(movie_name) + " already won an award!"
 
-    print '\n'
+    #print '\n'
 
     # Final results
     for key in winners:
