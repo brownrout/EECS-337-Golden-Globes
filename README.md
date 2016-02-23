@@ -30,3 +30,6 @@ We were inspired to utilize emojis for sentiment analysis by this repo: https://
 
 IMPORTANT NOTES:
 GET_AWARDS_ALT: We implemented a more refined award function that removed duplicate awards by comparing two strings and measuring the similarities.  We leveraged a python library and was not sure if it violated the rules, so the less accurate version of get_awards is hooked up to the autograder.
+
+
+**autograder for 2015 takes especially long for presenters and nominees
