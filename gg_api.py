@@ -307,7 +307,7 @@ def get_nominees(year):
     print "\n"
     
     for key in nominees:
-        print key + ' :' + ' and '.join(nominees[key])
+        print key + ' : ' + ' and '.join(nominees[key])
     return nominees
 
 
@@ -582,7 +582,7 @@ def get_presenters(year):
     print "\n"
 
     for key in presenters:
-        print key + ' :' + ' and '.join(presenters[key])
+        print key + ' : ' + ' and '.join(presenters[key])
     return presenters
 
 
