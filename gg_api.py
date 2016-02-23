@@ -94,10 +94,8 @@ def get_hosts(year):
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
         hosts.append(key_final)
-
-    for w in hosts:
-        print w
     
+    print hosts
     return hosts
 
 def get_awards(year):
@@ -149,9 +147,7 @@ def get_awards(year):
         x_encoded = x.encode("utf-8")
         encoded_awards.append(x_encoded)
     awards = encoded_awards
-    for w in awards:
-        print w
-
+    print awards
     return awards
 
 def get_awards_alt(year):
@@ -206,9 +202,7 @@ def get_awards_alt(year):
         encoded_awards.append(x_encoded)
 
     awards = encoded_awards
-    for w in awards:
-        print w
-
+    print awards
     return awards
 
 def remove_similar(awardList):
@@ -301,13 +295,8 @@ def get_nominees(year):
             final_nominees.append(key_final)
         
         nominees[w] = final_nominees
-    
-    print "\n"
-    print "The nominees are:"
-    print "\n"
-    
-    for key in nominees:
-        print key + ' : ' + ' and '.join(nominees[key])
+
+    print nominees
     return nominees
 
 
@@ -452,7 +441,7 @@ def get_winner(year):
                     # Assign the name to the award
                     winners[best_match] = (' ').join(actor_name)
                     # print "set " + winners[best_match] + " to: " + best_match
-            else:
+            # else:
                 # print (' ').join(actor_name) + " already won an award!"
 
         else:
@@ -505,13 +494,10 @@ def get_winner(year):
                         # Assign the name to the award
                         winners[best_match] = (' ').join(movie_name)
                         #print "set " + winners[best_match] + " to: " + best_match
-                else:
+                #else:
                     #print (' ').join(movie_name) + " already won an award!"
 
     #print '\n'
-    print '\n'
-    print "The winners for this year are:"
-    print "\n"
 
     # Final results
     for key in winners:
@@ -535,7 +521,7 @@ def get_presenters(year):
     
     #used below for testing until winners function was complete: also avoids cascading error
     
-#    winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
+    # winners = {'cecil b. demille award' : 'Jodie Foster', 'best motion picture - drama' : 'Argo', 'best performance by an actress in a motion picture - drama' : 'Jessica Chastain', 'best performance by an actor in a motion picture - drama' : 'Daniel Day-Lewis', 'best motion picture - comedy or musical' : 'Les Miserables', 'best performance by an actress in a motion picture - comedy or musical' : 'Jennifer Lawrence', 'best performance by an actor in a motion picture - comedy or musical' : 'Hugh Jackman', 'best animated feature film' : 'Brave', 'best foreign language film' : 'Amour', 'best performance by an actress in a supporting role in a motion picture' : 'Anne Hathaway', 'best performance by an actor in a supporting role in a motion picture' : 'Christoph Waltz', 'best director - motion picture' : 'Ben Affleck', 'best screenplay - motion picture' : 'Quentin Tarantino', 'best original score - motion picture' : 'Mychael Danna', 'best original song - motion picture' : 'Skyfall', 'best television series - drama' : 'Homeland', 'best performance by an actress in a television series - drama' : 'Claire Danes', 'best performance by an actor in a television series - drama' : 'Damian Lewis', 'best television series - comedy or musical' : 'Girls', 'best performance by an actress in a television series - comedy or musical':'Lena Dunham', 'best performance by an actor in a television series - comedy or musical':'Don Cheadle', 'best mini-series or motion picture made for television':'Game Change', 'best performance by an actress in a mini-series or motion picture made for television':'Julianne Moore', 'best performance by an actor in a mini-series or motion picture made for television':'Kevin Costner', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television': 'Maggie Smith', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television': 'Ed Harris'}
 
     winners = get_winner(year)
 
@@ -578,12 +564,7 @@ def get_presenters(year):
             final_presenters.append(key_final)
 
         presenters[w] = final_presenters
-    print "\n"
-    print "The presenters are:"
-    print "\n"
-
-    for key in presenters:
-        print key + ' : ' + ' and '.join(presenters[key])
+    print presenters
     return presenters
 
 
@@ -660,9 +641,7 @@ def get_humor(year):
         key_final = w.encode("utf-8")
         humor.append(key_final)
     
-    for w in humor:
-        print w
-
+    print humor
     return humor
 
 def get_bestdressed(year):
@@ -699,8 +678,7 @@ def get_bestdressed(year):
         key_final = w.encode("utf-8")
         bestdressed.append(key_final)
     
-    for w in bestdressed:
-        print w
+    print bestdressed
     return bestdressed
 
 
@@ -725,6 +703,7 @@ def get_worstdressed(year):
         if any(w in tweet for w in worstdressed_keywords):
             worstdressed_tweets.append(tweet)
 
+    print worstdressed_tweets
     for tweet in worstdressed_tweets:
         tweet_names = get_human_names_faster(tweet)
         for t in tweet_names:
@@ -738,8 +717,7 @@ def get_worstdressed(year):
         key_final = w.encode("utf-8")
         worstdressed.append(key_final)
     
-    for w in worstdressed:
-        print w
+    print worstdressed
     return worstdressed
 
 #FIRST STRATEGY WE IMPLEMENTED FOR GET_WINNER THAT WAS NOT AS SUCCESSFUL
