@@ -94,8 +94,10 @@ def get_hosts(year):
     for w,v in cnt.most_common(2):
         key_final = w.encode("utf-8")
         hosts.append(key_final)
+
+    for w in hosts:
+        print w
     
-    print hosts
     return hosts
 
 def get_awards(year):
@@ -147,7 +149,9 @@ def get_awards(year):
         x_encoded = x.encode("utf-8")
         encoded_awards.append(x_encoded)
     awards = encoded_awards
-    print awards
+    for w in awards:
+        print w
+
     return awards
 
 def get_awards_alt(year):
@@ -202,7 +206,9 @@ def get_awards_alt(year):
         encoded_awards.append(x_encoded)
 
     awards = encoded_awards
-    print awards
+    for w in awards:
+        print w
+
     return awards
 
 def remove_similar(awardList):
@@ -295,8 +301,13 @@ def get_nominees(year):
             final_nominees.append(key_final)
         
         nominees[w] = final_nominees
-
-    print nominees
+    
+    print "\n"
+    print "The nominees are:"
+    print "\n"
+    
+    for key in nominees:
+        print key + ' :' + ' and '.join(nominees[key])
     return nominees
 
 
@@ -498,6 +509,8 @@ def get_winner(year):
                     print (' ').join(movie_name) + " already won an award!"
 
     print '\n'
+    print "The winners for this year are:"
+    print "\n"
 
     # Final results
     for key in winners:
@@ -564,7 +577,12 @@ def get_presenters(year):
             final_presenters.append(key_final)
 
         presenters[w] = final_presenters
-    print presenters
+    print "\n"
+    print "The presenters are:"
+    print "\n"
+
+    for key in presenters:
+        print key + ' :' + ' and '.join(presenters[key])
     return presenters
 
 
@@ -641,7 +659,9 @@ def get_humor(year):
         key_final = w.encode("utf-8")
         humor.append(key_final)
     
-    print humor
+    for w in humor:
+        print w
+
     return humor
 
 def get_bestdressed(year):
@@ -678,7 +698,8 @@ def get_bestdressed(year):
         key_final = w.encode("utf-8")
         bestdressed.append(key_final)
     
-    print bestdressed
+    for w in bestdressed:
+        print w
     return bestdressed
 
 
@@ -703,7 +724,6 @@ def get_worstdressed(year):
         if any(w in tweet for w in worstdressed_keywords):
             worstdressed_tweets.append(tweet)
 
-    print worstdressed_tweets
     for tweet in worstdressed_tweets:
         tweet_names = get_human_names_faster(tweet)
         for t in tweet_names:
@@ -717,7 +737,8 @@ def get_worstdressed(year):
         key_final = w.encode("utf-8")
         worstdressed.append(key_final)
     
-    print worstdressed
+    for w in worstdressed:
+        print w
     return worstdressed
 
 #FIRST STRATEGY WE IMPLEMENTED FOR GET_WINNER THAT WAS NOT AS SUCCESSFUL
