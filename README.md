@@ -5,7 +5,7 @@ GROUP 4: Eric Brownrout, Sonia Nigam, Shraya Soundararajan, Richard Gates Porter
 PROJECT DESCRIPTION:
 Our project expands the five functions of the API in various ways: using stoplists, the functions themselves, and lists of key search words we looked to close in on the right information.  We leverage a global stoplist, in combination with analysis of consecutive capital words. We also make calls to the IMDbPY database as a substitute for a celebrity-specific name list. 
     
-REQURIED FUNCTIONS
+REQUIRED FUNCTIONS
     - get_nominees
     - get_winner
     - get_hosts
@@ -32,6 +32,6 @@ IMPORTANT NOTES:
 GET_AWARDS_ALT: We implemented a more refined award function that removed duplicate awards by comparing two strings and measuring the similarities.  We leveraged a python library and was not sure if it violated the rules, so the less accurate version of get_awards is hooked up to the autograder.
 
 
-****autograder for 2015 takes especially long for presenters and nominees and we apologize but couldn't find a way to optimize it.
-    -if it is taking too long, you can sub get_human_names with get_human_names_faster in both function calls.  The results are less accurate but quicker
+****AUTOGRADER 2015: Takes especially long for presenters and nominees and we apologize but couldn't find a way to optimize it.
+- if it is taking too long, you can sub get_human_names with get_human_names_faster in both function calls.  The results are less accurate but quicker
     
