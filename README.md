@@ -32,4 +32,6 @@ IMPORTANT NOTES:
 GET_AWARDS_ALT: We implemented a more refined award function that removed duplicate awards by comparing two strings and measuring the similarities.  We leveraged a python library and was not sure if it violated the rules, so the less accurate version of get_awards is hooked up to the autograder.
 
 
-**autograder for 2015 takes especially long for presenters and nominees
+****autograder for 2015 takes especially long for presenters and nominees and we apologize but couldn't find a way to optimize it.
+    -if it is taking too long, you can sub get_human_names with get_human_names_faster in both function calls.  The results are less accurate but quicker
+    
